@@ -1,0 +1,61 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    restart: unless-stopped
+    command: ["mongod", "--auth"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: citytwin
+    volumes:
+      - mongo_data:/data/db
+      - ./infra/mongo-init.js:/docker-entrypoint-initdb.d/init.js:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "-u", "${MONGO_INITDB_ROOT_USERNAME}", "-p", "${MONGO_INITDB_ROOT_PASSWORD}", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - citytwin-net
+
+  backend:
+    image: ${BACKEND_IMAGE:-citytwin-backend:latest}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ENVIRONMENT: production
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_DB_NAME: citytwin
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+    networks:
+      - citytwin-net
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-citytwin-frontend:latest}
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_MAPBOX_TOKEN: ${NEXT_PUBLIC_MAPBOX_TOKEN}
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - citytwin-net
+
+volumes:
+  mongo_data:
+
+networks:
+  citytwin-net:
+    driver: bridge

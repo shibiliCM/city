@@ -1,0 +1,34 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+motor==3.6.0
+pymongo==4.9.2
+pydantic==2.10.4
+pydantic-settings==2.7.1
+python-jose[cryptography]==3.3.0
+bcrypt==4.2.1
+python-multipart==0.0.20
+email-validator==2.2.0
+
+# Data science
+pandas>=2.2.3
+numpy>=1.26.4
+scikit-learn>=1.5.2
+xgboost>=2.1.3
+prophet
+geopandas>=1.0.1
+networkx>=3.4.2
+
+# AI / LLM
+google-generativeai==0.8.3
+langchain==0.3.14
+langchain-google-genai==2.0.8
+
+# Report generation
+weasyprint==63.1
+python-pptx==1.0.2
+plotly==5.24.1
+
+# Utilities
+httpx==0.28.1
+aiofiles==24.1.0
+python-dateutil==2.9.0
