@@ -214,10 +214,4 @@ MIT © CityTwin AI
    
 
 
-
-
-# Admin Login
-Email: [EMAIL_ADDRESS]="admin@citytwin.com"
-Password: [PASSWORD]="adminpassword123"
-
 ###  powershell -ExecutionPolicy Bypass -File .\start_all.ps1
